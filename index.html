@@ -3,11 +3,27 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Lions Tigers and Bears</title>
+	
+	<style>
+		body { margin: 0; }
+		canvas { display: block; }
+	</style>
 </head>
-<body>
+<body>	
+	<script src="js/three.js"></script>
+	<script>
+		function init(){
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+		}
+		
+		init();
+	</script>
 	
-	<a href="mailto:info@lionstigersandbears.be">Oh my</a>
-	
-	test...
 </body>
 </html>
