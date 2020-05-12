@@ -2,16 +2,49 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Lions Tigers and Bears</title>
+	<title>Lions Tigers &amp; Bears</title>
 	
 	<style>
-		body { margin: 0; }
-		canvas { display: block; }
+		body { 
+			margin: 0; 
+			background: black url("/assets/textures/website-background.jpg") no-repeat center center;
+			background-size: cover;
+		}
+		canvas { 
+			display: block; 
+			
+		}
+		
+		#overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			overflow: hidden;
+			z-index: 100;
+			
+			background:-webkit-radial-gradient(rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, .6) 100%);
+			pointer-events: none;
+		}
+		
+		#overlay .inner {
+			text-align: center;
+		}
+		
+		#logotype {
+			color: #ffffff;
+		}
 	</style>
 </head>
 <body>	
-	<!--<script src="js/three.min.js"></script>
-	<script src="js/three.module.js"></script>-->
+	
+	<div id="overlay">
+		<div class="inner">
+			<h1 id="logotype"><a href="#">Lions Tigers &amp; Bears</a></h1>
+		</div>
+	</div>
+	
 	<script type="module" >
 		
 		import * as THREE from './build/three.module.js';
@@ -26,7 +59,7 @@
 			scene = new THREE.Scene();
 			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			
-			renderer = new THREE.WebGLRenderer();
+			renderer = new THREE.WebGLRenderer({ alpha: true });
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			renderer.setPixelRatio(window.devicePixelRatio);
 			document.body.appendChild( renderer.domElement );
@@ -77,7 +110,7 @@
 				totempole = collada.scene;
 			});
 			
-			camera.position.set(0, 0, 11);
+			camera.position.set(0, 0, 8);
 			camera.lookAt(0, 0, 0);
 			controls = new OrbitControls( camera, renderer.domElement );
 			
@@ -87,7 +120,7 @@
 			controls.screenSpacePanning = false;
 
 			controls.minDistance = 1;
-			controls.maxDistance = 15;
+			controls.maxDistance = 9;
 
 			controls.maxPolarAngle = Math.PI / 2;
 
