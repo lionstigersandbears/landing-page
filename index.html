@@ -17,14 +17,29 @@
 		import * as THREE from './build/three.module.js';
 		
 		import { ColladaLoader } from './jsm/loaders/ColladaLoader.js';
+		import { OrbitControls } from './jsm/controls/OrbitControls.js';
+		
+		var scene, camera, renderer, ambientLight, directionalLight, controls;
+		
 		
 		function init(){
-			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			
-			var renderer = new THREE.WebGLRenderer();
+			renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setPixelRatio(window.devicePixelRatio);
 			document.body.appendChild( renderer.domElement );
+			
+			var lineworkMaterial = new THREE.MeshPhongMaterial({map:THREE.ImageUtils.loadTexture('./assets/textures/LTB-Emissive.jpg')});
+			
+			ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
+			scene.add( ambientLight );
+			
+			directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+			directionalLight.position.set( 1, 1, 0 ).normalize();
+			scene.add( directionalLight );
+
 			
 			// load collada
 			var totempole;
@@ -35,14 +50,74 @@
 			
 			var loader = new ColladaLoader( loadingManager );
 			loader.load('./assets/models/WebGL-Export.dae', function(collada){
-				totempole = collada;
+				
+				// set materials
+				console.log(collada.scene);
+				
+				for(var i = 0; i < collada.scene.children.length; i++){
+					for(var j = 0; j < collada.scene.children[i].material.length; j++){
+						var name = collada.scene.children[i].material[j].name;
+						
+						//console.log(name);
+						
+						switch(name){
+							case "Linework":
+								collada.scene.children[i].material[j] = lineworkMaterial;
+							break;
+							case "Eyes":
+								collada.scene.children[i].material[j] = lineworkMaterial;
+							break;
+						}
+					}
+				}
+				
+				
+				totempole = collada.scene;
 			});
 			
+			camera.position.set(0, 2, 11);
+			camera.lookAt(0, 0, 0);
+			controls = new OrbitControls( camera, renderer.domElement );
 			
+			controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+			controls.dampingFactor = 0.05;
+
+			controls.screenSpacePanning = false;
+
+			controls.minDistance = 1;
+			controls.maxDistance = 500;
+
+			controls.maxPolarAngle = Math.PI / 2;
+
+		}
+		
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+		
+		window.addEventListener( 'resize', onWindowResize, false );
+		
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			render();
+
+		}
+		
+		function render() {
+			renderer.render( scene, camera );
+			//console.log(camera.position);
 
 		}
 		
 		init();
+		animate();
 	</script>
 	
 </body>
