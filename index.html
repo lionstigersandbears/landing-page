@@ -10,8 +10,14 @@
 	</style>
 </head>
 <body>	
-	<script src="js/three.js"></script>
-	<script>
+	<!--<script src="js/three.min.js"></script>
+	<script src="js/three.module.js"></script>-->
+	<script type="module" >
+		
+		import * as THREE from './build/three.module.js';
+		
+		import { ColladaLoader } from './jsm/loaders/ColladaLoader.js';
+		
 		function init(){
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -19,6 +25,20 @@
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
+			
+			// load collada
+			var totempole;
+			
+			var loadingManager = new THREE.LoadingManager( function() {
+				scene.add(totempole);
+			} );
+			
+			var loader = new ColladaLoader( loadingManager );
+			loader.load('./assets/models/WebGL-Export.dae', function(collada){
+				totempole = collada;
+			});
+			
+			
 
 		}
 		
