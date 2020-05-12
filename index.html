@@ -31,15 +31,17 @@
 			renderer.setPixelRatio(window.devicePixelRatio);
 			document.body.appendChild( renderer.domElement );
 			
-			var lineworkMaterial = new THREE.MeshPhongMaterial({map:THREE.ImageUtils.loadTexture('./assets/textures/LTB-Emissive.jpg')});
+			var lineworkMaterial = new THREE.MeshPhongMaterial({emissiveMap:THREE.ImageUtils.loadTexture('./assets/textures/LTB-Emissive.jpg'), emissive: new THREE.Color(0xffffff)});
+			var eyeMaterial = new THREE.MeshPhongMaterial({ emissive: new THREE.Color(0xffffff) });
 			
+			/*
 			ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
 			scene.add( ambientLight );
 			
 			directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
 			directionalLight.position.set( 1, 1, 0 ).normalize();
 			scene.add( directionalLight );
-
+			*/
 			
 			// load collada
 			var totempole;
@@ -65,7 +67,7 @@
 								collada.scene.children[i].material[j] = lineworkMaterial;
 							break;
 							case "Eyes":
-								collada.scene.children[i].material[j] = lineworkMaterial;
+								collada.scene.children[i].material[j] = eyeMaterial;
 							break;
 						}
 					}
@@ -75,7 +77,7 @@
 				totempole = collada.scene;
 			});
 			
-			camera.position.set(0, 2, 11);
+			camera.position.set(0, 0, 11);
 			camera.lookAt(0, 0, 0);
 			controls = new OrbitControls( camera, renderer.domElement );
 			
@@ -85,7 +87,7 @@
 			controls.screenSpacePanning = false;
 
 			controls.minDistance = 1;
-			controls.maxDistance = 500;
+			controls.maxDistance = 15;
 
 			controls.maxPolarAngle = Math.PI / 2;
 
