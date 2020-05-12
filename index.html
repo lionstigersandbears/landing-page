@@ -83,7 +83,6 @@
 		
 		#about-link {
 			bottom: 16%;
-			color: red;
 		}
 		
 		@media only screen and (min-width:768px) {
@@ -94,6 +93,63 @@
 			#about-link {
 				bottom: 15%;
 			}
+			
+			#about .content {
+				font-size: 1em!important;
+			}
+		}
+		
+		#about {
+			position: fixed;
+			top:0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			background: rgba(0, 0, 0, .75);
+			z-index: 400;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		#about .content {
+			font-size: larger;
+			text-align: left;
+			line-height: 1.5em;
+			padding: 40px 20px;
+			letter-spacing: .5px;
+		}
+		
+		.content p {
+			max-width: 25rem;
+			margin: 0 auto 1em;
+		}
+		
+		.content a {
+			font-style: italic;
+			color: #cccccc;
+		}
+		
+		.content a:hover {
+			color: #ff0000;
+		}
+		
+		.first-paragraph {
+			font-size: 1.2em;
+		}
+		
+		.close-link {
+			margin-top: 2em!important;
+			text-align: right;
+		}
+		
+		.close-link a:hover {
+			color: #ffffff;
+			text-decoration: none;
+		}
+		
+		.closed {
+			display: none !important;
 		}
 		
 	</style>
@@ -107,6 +163,16 @@
 	<a href="mailto:info@lionstigersandbears.be" id="contact" class="floating link">Contact</a>
 	
 	<a href="#about" id="about-link" class="floating link">About</a>
+	
+	<div id="about" class="closed">
+		<div class="content">
+			<p class="first-paragraph">Welcome to our den.</p>
+			<p>It is still under construction, but keep an eye out for updates real soon.</p>
+			<p>In the mean time, you should follow us on <a href="https://www.instagram.com/lionstigersbears_be/" target="_blank">Instagram</a> and <a href="https://twitter.com/lionstigersbea3" target="_blank">Twitter</a>.</p>
+			
+			<p class="close-link"><a href="#close" id="close-about" >Close</a></p>
+		</div>
+	</div>
 	
 	<script type="module" >
 		
@@ -253,6 +319,16 @@
 		
 		init();
 		animate();
+		
+		function ToggleAbout(e){
+			e.preventDefault();
+			document.getElementById("about").classList.toggle("closed");
+			
+		}
+		
+		document.getElementById("about-link").addEventListener("click", ToggleAbout, false);
+		document.getElementById("close-about").addEventListener("click", ToggleAbout, false);
+		
 	</script>
 	
 </body>
