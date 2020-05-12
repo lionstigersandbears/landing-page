@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name=viewport content="width=device-width,initial-scale=1">
 	<title>Lions Tigers &amp; Bears</title>
 	
 	<style>
@@ -71,8 +72,9 @@
 		
 		.floating.link {
 			font-variant: small-caps;
-			font-size: 1.5em;
+			font-size: 2em;
 			letter-spacing: .01em;
+			display: block;
 			
 			width: 100%;
 			bottom: 10%;
@@ -80,16 +82,17 @@
 		}
 		
 		#about-link {
-			bottom: 15%;
+			bottom: 16%;
+			color: red;
 		}
 		
-		@media only screen and (max-width:768px) {
+		@media only screen and (min-width:768px) {
 			.floating.link {
-				font-size: 3em !important;
+				font-size: 1.5em;
 			}
 			
 			#about-link {
-				bottom: 18%;
+				bottom: 15%;
 			}
 		}
 		
@@ -112,6 +115,13 @@
 		import { ColladaLoader } from './jsm/loaders/ColladaLoader.js';
 		import { OrbitControls } from './jsm/controls/OrbitControls.js';
 		
+		var autoRotateSpeed = 2;
+		var autoRotateSpeedMultiplier = 8;
+		var Deg2Rad = (Math.PI*2)/360;
+		var Rad2Deg = 360/(Math.PI*2);
+		
+		var totempole;
+		
 		var scene, camera, renderer, ambientLight, directionalLight, controls;
 		
 		
@@ -127,27 +137,20 @@
 			var lineworkMaterial = new THREE.MeshPhongMaterial({emissiveMap:THREE.ImageUtils.loadTexture('./assets/textures/LTB-Emissive.jpg'), emissive: new THREE.Color(0xffffff)});
 			var eyeMaterial = new THREE.MeshPhongMaterial({ emissive: new THREE.Color(0xffffff) });
 			
-			/*
-			ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
-			scene.add( ambientLight );
-			
-			directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
-			directionalLight.position.set( 1, 1, 0 ).normalize();
-			scene.add( directionalLight );
-			*/
-			
 			// load collada
-			var totempole;
+			var totempole_scene;
 			
 			var loadingManager = new THREE.LoadingManager( function() {
-				scene.add(totempole);
+				scene.add(totempole_scene);
 			} );
+			
+			totempole = [];
 			
 			var loader = new ColladaLoader( loadingManager );
 			loader.load('./assets/models/WebGL-Export.dae', function(collada){
 				
 				// set materials
-				console.log(collada.scene);
+				// console.log(collada.scene);
 				
 				for(var i = 0; i < collada.scene.children.length; i++){
 					for(var j = 0; j < collada.scene.children[i].material.length; j++){
@@ -164,10 +167,12 @@
 							break;
 						}
 					}
+					
+					totempole[i] = collada.scene.children[i];
 				}
 				
 				
-				totempole = collada.scene;
+				totempole_scene = collada.scene;
 			});
 			
 			camera.position.set(0, 0, 8);
@@ -181,8 +186,14 @@
 
 			controls.minDistance = 1;
 			controls.maxDistance = 9;
+			
+			
 
 			controls.maxPolarAngle = Math.PI / 2;
+			controls.maxAzimuthAngle = 20*Deg2Rad;
+			controls.minAzimuthAngle = -20*Deg2Rad;
+			controls.autoRotate = false;
+			controls.autoRotateSpeed = autoRotateSpeedMultiplier;
 
 		}
 		
@@ -195,11 +206,42 @@
 
 		}
 		
+		window.onmousemove = findScreenCoords;
+		
+		function findScreenCoords(mouseEvent){
+			var xpos;
+			var ypos;
+			
+			xpos = mouseEvent.clientX;
+			ypos = mouseEvent.clientY;
+			
+			var screenwidth = window.innerWidth;
+			
+			var ratio_1 = 2;
+			var ratio_2 = 1;
+			
+			var mouse3D = new THREE.Vector3(
+		        ( mouseEvent.clientX / window.innerWidth ) * ratio_1 - ratio_2,
+		        - ( mouseEvent.clientY / window.innerHeight ) * ratio_1 + ratio_2,
+		        0.5 );		  
+		        
+		    mouse3D.z = 5;
+		        
+		    for(var i = 0; i < totempole.length; i++){
+			    totempole[i].lookAt(mouse3D);
+		    }
+		}
+		
 		window.addEventListener( 'resize', onWindowResize, false );
 		
 		function animate() {
 
 			requestAnimationFrame( animate );
+			
+			
+			controls.update();
+			
+			
 
 			render();
 
@@ -207,8 +249,6 @@
 		
 		function render() {
 			renderer.render( scene, camera );
-			//console.log(camera.position);
-
 		}
 		
 		init();
